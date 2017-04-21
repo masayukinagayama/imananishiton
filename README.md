@@ -28,6 +28,6 @@ GogoleAppsScriptのトリガーにて、以下の通り設定を行って下さ�
 - イベント：時間主導型/分タイマー/1分ごと
 
 ## other2
-以下の変数に「メールアドレス」と「Slackのtoken」を入力するようにして下さい。
+imananishiton.gs内の以下の変数に「メールアドレス」と「Slackのtoken」を入力するようにして下さい。
 - email = 'xxxxx';
 - var token = 'xxxxx';
