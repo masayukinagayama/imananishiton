@@ -39,13 +39,13 @@ Imananishiton.prototype = {
   getEventSchedule: function(event) {
     return {
       start: Utilities.formatDate(event.getStartTime(), 'Asia/Tokyo', 'HH:mm'),
-      end: Utilities.formatDate(event.getEndTime(), 'Asia/Tokyo', 'HH:mm')
+      end: Utilities.formatDate(event.getEndTime(), 'Asia/Tokyo', 'HH:mm'),
     }
   },
   changeSlackStatus: function(message) {
     var profile = {
       'status_text': message,
-      'status_emoji': ':date:'
+      'status_emoji': ':date:',
     }
     UrlFetchApp.fetch("https://slack.com/api/users.profile.set?token=" + this.token + "&profile=" + encodeURIComponent(JSON.stringify(profile)))
   },
