@@ -1,74 +1,60 @@
-function caltest() {
-  //現在の時間と1分後の間におけるイベントを取得
-  var cal = CalendarApp.getCalendarById(address);
+function myFunction() {
+  var email = 'xxxxx'
+  var token = 'xxxxx';
+
+  events = getCalendarEvents(email);
+  if (events.length == 0 || isPrivateEvent(events[0])) {
+    statusMessage = createStatusMessage();
+    changeSlackStatus(statusMessage, token);
+    return;
+  }
+
+  schedule = getEventSchedule(events[0]);
+  statusMessage = createStatusMessage(events[0], schedule);
+
+  changeSlackStatus(statusMessage, token);
+}
+
+function changeSlackStatus(message, token) {
+  var profile = {
+    'status_text': message,
+    'status_emoji': ':date:'
+  };
+  encodedProfile = encodeURIComponent(JSON.stringify(profile));
+  UrlFetchApp.fetch("https://slack.com/api/users.profile.set?token=" + token + "&profile=" + encodedProfile);
+}
+
+function createStatusMessage(event, schedule) {
+  if (!event) {
+    return 'カレンダー予定：予定なし';
+  }
+
+  if (event.getLocation() != '') {
+    return "カレンダー予定：" + event.getTitle() + " @ " + event.getLocation() + "【" + schedule['start'] + " ～ " + schedule['end'] + "】";
+  } else {
+    return "カレンダー予定：" + event.getTitle() + "【" + schedule['start'] + " ～ " + schedule['end'] + "】";
+  }
+}
+
+function getEventSchedule(event) {
+  return {
+    start: Utilities.formatDate(event.getStartTime(), 'Asia/Tokyo', 'HH:mm'),
+    end: Utilities.formatDate(event.getEndTime(), 'Asia/Tokyo', 'HH:mm')
+  };
+}
+
+function isPrivateEvent(event) {
+  if (event.getVisibility() != 'DEFAULT') {
+    return true;
+  }
+  return false;
+}
+
+function getCalendarEvents(email) {
   var start = new Date();
   var end = new Date();
   end.setMinutes(end.getMinutes() + 1);
-  var events = cal.getEvents(
-      new Date(start),
-      new Date(end));
 
-  if(events.length > 0){ //イベントが存在した場合
-    if(events[0].getVisibility() == "DEFAULT"){//DEFAULTだった場合(限定公開ではない)
-      if(events[0].getLocation() == ""){ //イベントに場所が存在しなかった場合
-        var Time = events[0].getStartTime();
-        var Hour = Time.getHours();
-        var Min = Time.getMinutes();
-        var Time = events[0].getEndTime();
-        var Hour2 = Time.getHours();
-        var Min2 = Time.getMinutes();
-        if(Hour < 10){
-          Hour = "0"+ Hour;
-        }
-        if(Min < 10){
-          Min = "0" + Min;
-        }
-        if(Hour2 < 10){
-          Hour2 = "0"+ Hour2;
-        }
-        if(Min2 < 10){
-          Min2 = "0" + Min2;
-        }
-        var statustext = "カレンダー予定：" + events[0].getTitle() + "【" + Hour + ":" + Min + " ～ "+ Hour2 + ":" + Min2 + "】";
-        var emoji = "date";
-        var url = "slack.com/api/users.profile.set?token=" + token + "&user=" + usrid + "&profile=%7B%22status_text%22%3A%22"+ statustext +"%22%2C%22status_emoji%22%3A%22%3A"+ emoji +"%3A%22%7D";
-        UrlFetchApp.fetch(url);
-      }else{ //イベントに場所が存在した場合
-        var Time = events[0].getStartTime();
-        var Hour = Time.getHours();
-        var Min = Time.getMinutes();
-        var Time = events[0].getEndTime();
-        var Hour2 = Time.getHours();
-        var Min2 = Time.getMinutes();
-        if(Hour < 10){
-          Hour = "0"+ Hour;
-        }
-        if(Min < 10){
-          Min = "0" + Min;
-        }
-        if(Hour2 < 10){
-          Hour2 = "0"+ Hour2;
-        }
-        if(Min2 < 10){
-          Min2 = "0" + Min2;
-        }
-        var statustext = "カレンダー予定：" + events[0].getTitle() + " @ " + events[0].getLocation() + "【" + Hour + ":" + Min + " ～ "+ Hour2 + ":" + Min2 + "】";
-        Logger.log(events[0].getStartTime());
-        var emoji = "date";
-        var url = "slack.com/api/users.profile.set?token=" + token + "&user=" + usrid + "&profile=%7B%22status_text%22%3A%22"+ statustext +"%22%2C%22status_emoji%22%3A%22%3A"+ emoji +"%3A%22%7D";
-        UrlFetchApp.fetch(url);
-      }
-    }else{
-      var statustext = "カレンダー予定：予定なし";
-      var emoji = "date";
-      var url = "slack.com/api/users.profile.set?token=" + token + "&user=" + usrid + "&profile=%7B%22status_text%22%3A%22"+ statustext +"%22%2C%22status_emoji%22%3A%22%3A"+ emoji +"%3A%22%7D";
-      UrlFetchApp.fetch(url);
-    }
-  }else{ //イベントが存在しない場合
-    var statustext = "カレンダー予定：予定なし";
-    var emoji = "date";
-    var url = "slack.com/api/users.profile.set?token=" + token + "&user=" + usrid + "&profile=%7B%22status_text%22%3A%22"+ statustext +"%22%2C%22status_emoji%22%3A%22%3A"+ emoji +"%3A%22%7D";
-    UrlFetchApp.fetch(url);
-  }
-
+  var calendar = CalendarApp.getCalendarById(email);
+  return calendar.getEvents(start, end);
 }
