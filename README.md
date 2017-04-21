@@ -22,8 +22,12 @@ GASの分トリガーを使用することで、1分毎に実行を行うこと�
 
 ![demo3](https://cloud.githubusercontent.com/assets/12445714/25271400/02d69c16-26bf-11e7-83e6-daa16c2690ed.png)
 
-## other
+## other1
 GogoleAppsScriptのトリガーにて、以下の通り設定を行って下さい。
 - 実行：myFunction
 - イベント：時間主導型/分タイマー/1分ごと
 
+## other2
+以下の変数に「メールアドレス」と「Slackのtoken」を入力するようにして下さい。
+- email = 'xxxxx';
+- var token = 'xxxxx';
