@@ -26,6 +26,7 @@ GASの分トリガーを使用することで、1分毎に実行を行うこと�
 GogoleAppsScriptのトリガーにて、以下の通り設定を行って下さい。
 - 実行：myFunction
 - イベント：時間主導型/分タイマー/1分ごと
+
 ![func](https://cloud.githubusercontent.com/assets/12445714/25301893/bb21ccca-276c-11e7-880f-1daebd4146ed.png)
 
 
