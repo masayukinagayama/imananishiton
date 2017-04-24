@@ -1,60 +1,52 @@
 function myFunction() {
   var email = 'xxxxx'
-  var token = 'xxxxx';
-
-  events = getCalendarEvents(email);
-  if (events.length == 0 || isPrivateEvent(events[0])) {
-    statusMessage = createStatusMessage();
-    changeSlackStatus(statusMessage, token);
-    return;
-  }
-
-  schedule = getEventSchedule(events[0]);
-  statusMessage = createStatusMessage(events[0], schedule);
-
-  changeSlackStatus(statusMessage, token);
+  var token = 'xxxxx'
+  var ima = new Imananishiton(email, token)
+  ima.nanishiton()
 }
 
-function changeSlackStatus(message, token) {
-  var profile = {
-    'status_text': message,
-    'status_emoji': ':date:'
-  };
-  encodedProfile = encodeURIComponent(JSON.stringify(profile));
-  UrlFetchApp.fetch("https://slack.com/api/users.profile.set?token=" + token + "&profile=" + encodedProfile);
+var Imananishiton = function(email, token) {
+    this.email = email
+    this.token = token
 }
 
-function createStatusMessage(event, schedule) {
-  if (!event) {
-    return 'カレンダー予定：予定なし';
-  }
-
-  if (event.getLocation() != '') {
-    return "カレンダー予定：" + event.getTitle() + " @ " + event.getLocation() + "【" + schedule['start'] + " ～ " + schedule['end'] + "】";
-  } else {
-    return "カレンダー予定：" + event.getTitle() + "【" + schedule['start'] + " ～ " + schedule['end'] + "】";
-  }
-}
-
-function getEventSchedule(event) {
-  return {
-    start: Utilities.formatDate(event.getStartTime(), 'Asia/Tokyo', 'HH:mm'),
-    end: Utilities.formatDate(event.getEndTime(), 'Asia/Tokyo', 'HH:mm')
-  };
-}
-
-function isPrivateEvent(event) {
-  if (event.getVisibility() != 'DEFAULT') {
-    return true;
-  }
-  return false;
-}
-
-function getCalendarEvents(email) {
-  var start = new Date();
-  var end = new Date();
-  end.setMinutes(end.getMinutes() + 1);
-
-  var calendar = CalendarApp.getCalendarById(email);
-  return calendar.getEvents(start, end);
+Imananishiton.prototype = {
+  nanishiton: function() {
+    var events = this.getCurrentEvents()
+    var message = this.createStatusMessage(events[0])
+    this.changeSlackStatus(message)
+  },
+  getCurrentEvents: function() {
+    var start = new Date()
+    var end = new Date(start.getTime() + 60 * 1000)
+    var calendar = CalendarApp.getCalendarById(this.email)
+    return calendar.getEvents(start, end)
+  },
+  createStatusMessage: function(event) {
+    if (!event || this.isPrivateEvent(event)) {
+      return 'カレンダー予定：予定なし'
+    }
+    var schedule = this.getEventSchedule(event)
+    var message = 'カレンダー予定：' + event.getTitle()
+    if (event.getLocation() !== '') {
+      message += ' @ ' + event.getLocation()
+    }
+    return message + '【' + schedule['start'] + ' ～ ' + schedule['end'] + '】'
+  },
+  isPrivateEvent: function(event) {
+    return event.getVisibility() !== CalendarApp.Visibility.DEFAULT
+  },
+  getEventSchedule: function(event) {
+    return {
+      start: Utilities.formatDate(event.getStartTime(), 'Asia/Tokyo', 'HH:mm'),
+      end: Utilities.formatDate(event.getEndTime(), 'Asia/Tokyo', 'HH:mm'),
+    }
+  },
+  changeSlackStatus: function(message) {
+    var profile = {
+      'status_text': message,
+      'status_emoji': ':date:',
+    }
+    UrlFetchApp.fetch("https://slack.com/api/users.profile.set?token=" + this.token + "&profile=" + encodeURIComponent(JSON.stringify(profile)))
+  },
 }
