@@ -32,7 +32,7 @@ Imananishiton.prototype = {
     var schedule = this.getEventSchedule(event)
     var message = 'カレンダー予定：' + event.getTitle()
     if (event.getLocation() !== '') {
-      message += ' @ ' + event.getLocation()
+      message += ' @ ' + event.getLocation().substr(0, 20)
     }
     return message + '【' + schedule['start'] + ' ～ ' + schedule['end'] + '】'
   },
