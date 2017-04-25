@@ -20,7 +20,10 @@ Imananishiton.prototype = {
     var start = new Date()
     var end = new Date(start.getTime() + 60 * 1000)
     var calendar = CalendarApp.getCalendarById(this.email)
-    return calendar.getEvents(start, end)
+    var events = calendar.getEvents(start, end)
+    return events.filter(function(event) {
+      return !(event.isAllDayEvent())
+    })
   },
   createStatusMessage: function(event) {
     if (!event || this.isPrivateEvent(event)) {
