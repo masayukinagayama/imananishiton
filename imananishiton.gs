@@ -1,20 +1,25 @@
 function myFunction() {
   var email = 'xxxxx'
   var token = 'xxxxx'
-  var ima = new Imananishiton(email, token)
+  var inEventEmoji = ':date:'
+  var noEventEmoji = ':smile:'
+  var ima = new Imananishiton(email, token, inEventEmoji, noEventEmoji)
   ima.nanishiton()
 }
 
-var Imananishiton = function(email, token) {
+var Imananishiton = function(email, token, inEventEmoji, noEventEmoji) {
     this.email = email
     this.token = token
+    this.inEventEmoji = inEventEmoji
+    this.noEventEmoji = noEventEmoji
 }
 
 Imananishiton.prototype = {
   nanishiton: function() {
     var events = this.getCurrentEvents()
     var message = this.createStatusMessage(events[0])
-    this.changeSlackStatus(message)
+    var emoji = this.createStatusEmoji(events[0])
+    this.changeSlackStatus(message, emoji)
   },
   getCurrentEvents: function() {
     var start = new Date()
@@ -42,10 +47,17 @@ Imananishiton.prototype = {
       end: Utilities.formatDate(event.getEndTime(), 'Asia/Tokyo', 'HH:mm'),
     }
   },
-  changeSlackStatus: function(message) {
+  createStatusEmoji: function(event) {
+    if (!event || this.isPrivateEvent(event)) {
+      return this.noEventEmoji
+    } else {
+      return this.inEventEmoji
+    }
+  },
+  changeSlackStatus: function(message, emoji) {
     var profile = {
       'status_text': message,
-      'status_emoji': ':date:',
+      'status_emoji': emoji,
     }
     UrlFetchApp.fetch("https://slack.com/api/users.profile.set?token=" + this.token + "&profile=" + encodeURIComponent(JSON.stringify(profile)))
   },
