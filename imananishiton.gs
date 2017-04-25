@@ -22,7 +22,7 @@ Imananishiton.prototype = {
     var calendar = CalendarApp.getCalendarById(this.email)
     var events = calendar.getEvents(start, end)
     return events.filter(function(event) {
-      return !(event.isAllDayEvent())
+      return !event.isAllDayEvent()
     })
   },
   createStatusMessage: function(event) {
