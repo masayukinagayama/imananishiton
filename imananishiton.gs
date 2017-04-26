@@ -21,19 +21,36 @@ Imananishiton.prototype = {
     var end = new Date(start.getTime() + 60 * 1000)
     var calendar = CalendarApp.getCalendarById(this.email)
     var events = calendar.getEvents(start, end)
-    return events.filter(function(event) {
-      return !event.isAllDayEvent()
+    return events.sort(function(first, second) {
+      if (!first.isAllDayEvent() && !second.isAllDayEvent()) {
+        if (first.getStartTime() < second.getStartTime()) {
+          return 1
+        } else if (first.getStartTime() > second.getStartTime()) {
+          return -1
+        } else {
+          return 0
+        }
+      }
+      if (!first.isAllDayEvent()) {
+        return -1
+      }
+      if (!second.isAllDayEvent()) {
+        return 1
+      }
     })
   },
   createStatusMessage: function(event) {
     if (!event || this.isPrivateEvent(event)) {
       return 'カレンダー予定：予定なし'
     }
-    var schedule = this.getEventSchedule(event)
     var message = 'カレンダー予定：' + event.getTitle()
     if (event.getLocation() !== '') {
       message += ' @ ' + event.getLocation().substr(0, 20)
     }
+    if (event.isAllDayEvent()) {
+      return message + '【終日】'
+    }
+    var schedule = this.getEventSchedule(event)
     return message + '【' + schedule['start'] + ' ～ ' + schedule['end'] + '】'
   },
   isPrivateEvent: function(event) {
