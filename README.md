@@ -49,3 +49,6 @@ GogoleAppsScriptのトリガーにて、以下の通り設定を行って下さ�
 
 ![func](https://cloud.githubusercontent.com/assets/12445714/25301893/bb21ccca-276c-11e7-880f-1daebd4146ed.png)
 
+## Option-スタンプを編集出来ます
+- `var inEventEmoji = ':date:'` ： 予定があった時のスタンプを入力出来ます
+- `var noEventEmoji = ':smile:'` ： 予定が無かったときのスタンプを入力出来ます
