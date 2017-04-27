@@ -46,7 +46,11 @@ Imananishiton.prototype = {
     }
     var message = 'カレンダー予定：' + event.getTitle()
     if (event.getLocation() !== '') {
-      message += ' @ ' + event.getLocation().substr(0, 20)
+      if (event.getLocation().length > 20) {
+        message += ' @ ' + event.getLocation().substr(0, 20) + '...'
+      } else {
+        message += ' @ ' + event.getLocation()
+      }
     }
     if (event.isAllDayEvent()) {
       return message + '【終日】'
