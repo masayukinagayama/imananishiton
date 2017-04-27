@@ -24,21 +24,10 @@ Imananishiton.prototype = {
     return events.sort(this.compareSchedule)
   },
   compareSchedule: function(first, second) {
-    if (!first.isAllDayEvent() && !second.isAllDayEvent()) {
-      if (first.getStartTime() < second.getStartTime()) {
-        return 1
-      } else if (first.getStartTime() > second.getStartTime()) {
-        return -1
-      } else {
-        return 0
-      }
-    }
-    if (!first.isAllDayEvent()) {
-      return -1
-    }
-    if (!second.isAllDayEvent()) {
-      return 1
-    }
+    if ((first.isAllDayEvent() && second.isAllDayEvent()) || first.getStartTime() === second.getStartTime()) { return 0 }
+    if (!first.isAllDayEvent()) { return -1 }
+    if (!second.isAllDayEvent()) { return 1 }
+    return first.getStartTime() < second.getStartTime() ? 1 : -1
   },
   createStatusMessage: function(event) {
     if (!event || this.isPrivateEvent(event)) {
