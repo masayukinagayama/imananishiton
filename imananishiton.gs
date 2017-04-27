@@ -25,17 +25,31 @@ Imananishiton.prototype = {
     var start = new Date()
     var end = new Date(start.getTime() + 60 * 1000)
     var calendar = CalendarApp.getCalendarById(this.email)
-    return calendar.getEvents(start, end)
+    var events = calendar.getEvents(start, end)
+    return events.sort(this.compareSchedule)
+  },
+  compareSchedule: function(first, second) {
+    if ((first.isAllDayEvent() && second.isAllDayEvent()) || first.getStartTime() === second.getStartTime()) { return 0 }
+    if (second.isAllDayEvent()) { return -1 }
+    if (first.isAllDayEvent()) { return 1 }
+    return first.getStartTime() < second.getStartTime() ? 1 : -1
   },
   createStatusMessage: function(event) {
     if (!event || this.isPrivateEvent(event)) {
       return 'カレンダー予定：予定なし'
     }
-    var schedule = this.getEventSchedule(event)
     var message = 'カレンダー予定：' + event.getTitle()
     if (event.getLocation() !== '') {
-      message += ' @ ' + event.getLocation()
+      if (event.getLocation().length > 20) {
+        message += ' @ ' + event.getLocation().substr(0, 20) + '...'
+      } else {
+        message += ' @ ' + event.getLocation()
+      }
     }
+    if (event.isAllDayEvent()) {
+      return message + '【終日】'
+    }
+    var schedule = this.getEventSchedule(event)
     return message + '【' + schedule['start'] + ' ～ ' + schedule['end'] + '】'
   },
   isPrivateEvent: function(event) {
