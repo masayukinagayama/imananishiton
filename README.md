@@ -22,15 +22,30 @@ GASの分トリガーを使用することで、1分毎に実行を行うこと�
 
 ![demo3](https://cloud.githubusercontent.com/assets/12445714/25271400/02d69c16-26bf-11e7-83e6-daa16c2690ed.png)
 
-## other1
+## Installation
+
+1. 適当なGoogle Spreadsheetを作成
+2. ツール → スクリプトエディタ からスクリプトエディタを開く
+3. テンプレートとして入力されているスクリプトを削除し、 `imananishiton.gs` の内容をコピペ
+4. 以下の変数の内容を入れ替え
+- var email = 'xxxxx'; ← 読み込ませたいGoogle Calendarのメールアドレス
+- var token = 'xxxxx'; ← Slackのtoken（後述）
+5. 実行ボタンを押し、自分のステータスが正常に変更されるか確認する
+6. 編集 → 現在のスクリプトのトリガー を選択し、myFunctionをトリガーに設定する（後述）
+
+
+### Slack tokenの取得方法
+
+以下のリンクから `xoxp-xxxxxxxx-xxxxxxxx-xxxxxxxx` のような形式のtokenを得られます。<br>
+**tokenは決して公開したり、リポジトリに含めたりしないでください**
+
+https://api.slack.com/custom-integrations/legacy-tokens
+
+### トリガーの設定
+
 GogoleAppsScriptのトリガーにて、以下の通り設定を行って下さい。
 - 実行：myFunction
 - イベント：時間主導型/分タイマー/1分ごと
 
 ![func](https://cloud.githubusercontent.com/assets/12445714/25301893/bb21ccca-276c-11e7-880f-1daebd4146ed.png)
 
-
-## other2
-imananishiton.gs内の以下の変数に「メールアドレス」と「Slackのtoken」を入力するようにして下さい。
-- var email = 'xxxxx';
-- var token = 'xxxxx';
