@@ -25,31 +25,51 @@ Imananishiton.prototype = {
     var start = new Date()
     var end = new Date(start.getTime() + 60 * 1000)
     var calendar = CalendarApp.getCalendarById(this.email)
-    var events = calendar.getEvents(start, end)
-    return events.sort(this.compareSchedule)
+    return calendar.getEvents(start, end)
   },
-  compareSchedule: function(first, second) {
-    if ((first.isAllDayEvent() && second.isAllDayEvent()) || first.getStartTime() === second.getStartTime()) { return 0 }
-    if (second.isAllDayEvent()) { return -1 }
-    if (first.isAllDayEvent()) { return 1 }
-    return first.getStartTime() < second.getStartTime() ? 1 : -1
+  holidaysInNextWeek: function() {
+    var start = new Date()
+    var weekAsMillisecond = 7 * 24 * 60 * 60 * 1000    
+    var end = new Date(start.getTime() + weekAsMillisecond)
+    var calendar = CalendarApp.getCalendarById(this.email)
+    var events = calendar.getEvents(start, end)
+            
+    return events.filter(function(e) {
+      return e.getTitle().indexOf('休暇') !== -1
+    })
+  },
+  createHolidayStatusMessage: function(holidayEvents) {
+    var formattedDate = function(event) {
+      var day = Utilities.formatDate(event.getStartTime(), 'Asia/Tokyo', 'M/d')
+      var dayOfWeekIndex = Utilities.formatDate(event.getStartTime(), 'Asia/Tokyo', 'u')
+      var dayOfWeek = [ "日", "月", "火", "水", "木", "金", "土" ][dayOfWeekIndex % 7]
+
+      return day + '(' + dayOfWeek + ')'
+    }
+    var convertToHolidayDescription = function(event) {
+      var title = event.getTitle()
+      if (title.indexOf('休暇') === -1) {
+        return null
+      }
+      return title + formattedDate(event)            
+    }
+    return holidayEvents.map(convertToHolidayDescription).filter(function(e) { return e != null }).join(', ')
   },
   createStatusMessage: function(event) {
-    if (!event || this.isPrivateEvent(event)) {
-      return 'カレンダー予定：予定なし'
-    }
-    var message = 'カレンダー予定：' + event.getTitle()
-    if (event.getLocation() !== '') {
-      if (event.getLocation().length > 20) {
-        message += ' @ ' + event.getLocation().substr(0, 20) + '...'
+    var noEvent = !event || this.isPrivateEvent(event)
+    if (noEvent) {
+      var holidayEvents = this.holidaysInNextWeek()
+      if (holidayEvents.length == 0) {
+        return 'カレンダー予定：予定なし'        
       } else {
-        message += ' @ ' + event.getLocation()
+        return this.createHolidayStatusMessage(holidayEvents)
       }
     }
-    if (event.isAllDayEvent()) {
-      return message + '【終日】'
-    }
     var schedule = this.getEventSchedule(event)
+    var message = 'カレンダー予定：' + event.getTitle()
+    if (event.getLocation() !== '') {
+      message += ' @ ' + event.getLocation()
+    }
     return message + '【' + schedule['start'] + ' ～ ' + schedule['end'] + '】'
   },
   isPrivateEvent: function(event) {
