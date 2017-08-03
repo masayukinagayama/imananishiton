@@ -18,9 +18,13 @@ GASの分トリガーを使用することで、1分毎に実行を行うこと�
 
 ![demo2](https://cloud.githubusercontent.com/assets/12445714/25271399/02c79bbc-26bf-11e7-8b14-ddfb0cefbde8.png)
 
+- 現在の予定がなく、1週間以内に休暇が入っている場合
+
+![demo3](https://user-images.githubusercontent.com/904354/28901183-78ea3872-7831-11e7-9143-d62a3ab9d354.png)
+
 - 予定が無い場合 / 限定公開の予定が入っている場合
 
-![demo3](https://cloud.githubusercontent.com/assets/12445714/25271400/02d69c16-26bf-11e7-83e6-daa16c2690ed.png)
+![demo4](https://cloud.githubusercontent.com/assets/12445714/25271400/02d69c16-26bf-11e7-83e6-daa16c2690ed.png)
 
 ## Installation
 
