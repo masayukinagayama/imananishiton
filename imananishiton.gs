@@ -27,34 +27,6 @@ Imananishiton.prototype = {
     var calendar = CalendarApp.getCalendarById(this.email)
     return calendar.getEvents(start, end)
   },
-  holidaysInNextWeek: function() {
-    var start = new Date()
-    var weekAsMillisecond = 7 * 24 * 60 * 60 * 1000    
-    var end = new Date(start.getTime() + weekAsMillisecond)
-    var calendar = CalendarApp.getCalendarById(this.email)
-    var events = calendar.getEvents(start, end)
-            
-    return events.filter(function(e) {
-      return e.getTitle().indexOf('休暇') !== -1
-    })
-  },
-  createHolidayStatusMessage: function(holidayEvents) {
-    var formattedDate = function(event) {
-      var day = Utilities.formatDate(event.getStartTime(), 'Asia/Tokyo', 'M/d')
-      var dayOfWeekIndex = Utilities.formatDate(event.getStartTime(), 'Asia/Tokyo', 'u')
-      var dayOfWeek = [ "日", "月", "火", "水", "木", "金", "土" ][dayOfWeekIndex % 7]
-
-      return day + '(' + dayOfWeek + ')'
-    }
-    var convertToHolidayDescription = function(event) {
-      var title = event.getTitle()
-      if (title.indexOf('休暇') === -1) {
-        return null
-      }
-      return title + formattedDate(event)            
-    }
-    return holidayEvents.map(convertToHolidayDescription).filter(function(e) { return e != null }).join(', ')
-  },
   createStatusMessage: function(event) {
     var noEvent = !event || this.isPrivateEvent(event)
     if (noEvent) {
@@ -74,6 +46,40 @@ Imananishiton.prototype = {
   },
   isPrivateEvent: function(event) {
     return event.getVisibility() !== CalendarApp.Visibility.DEFAULT
+  },
+  holidaysInNextWeek: function() {
+    var start = new Date()
+    var weekAsMillisecond = 7 * 24 * 60 * 60 * 1000    
+    var end = new Date(start.getTime() + weekAsMillisecond)
+    var calendar = CalendarApp.getCalendarById(this.email)
+    var events = calendar.getEvents(start, end)
+            
+    return events.filter(function(e) {
+      if (e.getTitle().indexOf('休暇') === -1) {
+        return false
+      }
+      if (e.isAllDayEvent() == false) {
+        return false
+      }
+      return true
+    })
+  },
+  createHolidayStatusMessage: function(holidayEvents) {
+    var formattedDate = function(event) {
+      var day = Utilities.formatDate(event.getStartTime(), 'Asia/Tokyo', 'M/d')
+      var dayOfWeekIndex = Utilities.formatDate(event.getStartTime(), 'Asia/Tokyo', 'u')  % 7
+      var dayOfWeek = [ "日", "月", "火", "水", "木", "金", "土" ][dayOfWeekIndex]
+
+      return day + '(' + dayOfWeek + ')'
+    }
+    var convertToHolidayDescription = function(event) {
+      var title = event.getTitle()
+      if (title.indexOf('休暇') === -1) {
+        return null
+      }
+      return title + formattedDate(event)            
+    }
+    return holidayEvents.map(convertToHolidayDescription).filter(function(e) { return e != null }).join(', ')
   },
   getEventSchedule: function(event) {
     return {
