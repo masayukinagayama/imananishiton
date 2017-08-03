@@ -62,7 +62,7 @@ Imananishiton.prototype = {
       if (holidayEvents.length == 0) {
         return 'カレンダー予定：予定なし'        
       } else {
-        return this.createHolidayStatusMessage(holidayEvents)
+        return 'カレンダー予定：' + this.createHolidayStatusMessage(holidayEvents)
       }
     }
     var schedule = this.getEventSchedule(event)
