@@ -26,7 +26,8 @@ GASの分トリガーを使用することで、1分毎に実行を行うこと�
 
 1. 適当なGoogle Spreadsheetを作成
 2. ツール → スクリプトエディタ からスクリプトエディタを開く
-3. テンプレートとして入力されているスクリプトを削除し、 `imananishiton.gs` の内容をコピペ
+3. テンプレートとして入力されているスクリプトを削除し、 `imananishiton.gs` ↓ ↓ の内容をコピペ
+https://github.com/masayukinagayama/imananishiton/blob/master/imananishiton.gs
 4. 以下の変数の内容を入れ替え
 - var email = 'xxxxx'; ← 読み込ませたいGoogle Calendarのメールアドレス
 - var token = 'xxxxx'; ← Slackのtoken（後述）
